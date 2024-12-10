@@ -5,7 +5,6 @@ exports.createProduct = async (req, res) => {
   const image = req.file ? req.file.path : null;
 
   try {
-    // Validate input data
     if (!name || !description || !price || !stockQuantity || !categoryId) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -27,23 +26,6 @@ exports.createProduct = async (req, res) => {
     res.status(201).json(newProduct);
   } catch (err) {
     res.status(500).json({ error: "Failed to add product", details: err.message });
-  }
-};
-exports.createProduct = async (req, res) => {
-  const { name, description, price, stockQuantity, categoryId } = req.body;
-  const product = new Product({
-    name,
-    description,
-    price,
-    stockQuantity,
-    categoryId
-  });
-
-  try {
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 };
 
