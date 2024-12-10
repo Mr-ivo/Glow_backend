@@ -1,12 +1,18 @@
 const Product = require("../models/Product");
 
-
 exports.createProduct = async (req, res) => {
   const { name, description, price, stockQuantity, categoryId } = req.body;
   const image = req.file ? req.file.path : null;
 
   try {
-    if (!image) throw new Error("Image is required");
+    // Validate input data
+    if (!name || !description || !price || !stockQuantity || !categoryId) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    
+    if (!image) {
+      return res.status(400).json({ error: "Image is required" });
+    }
 
     const product = new Product({
       name,
@@ -17,24 +23,12 @@ exports.createProduct = async (req, res) => {
       image,
     });
 
-    await product.save();
-    res.status(201).json(product);
+    const newProduct = await product.save();
+    res.status(201).json(newProduct);
   } catch (err) {
     res.status(500).json({ error: "Failed to add product", details: err.message });
   }
 };
-
-// Get all products
-exports.getProducts = async (req, res) => {
-  try {
-    const products = await Product.find().populate("categoryId");
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch products", details: err.message });
-  }
-};
-
-
 exports.createProduct = async (req, res) => {
   const { name, description, price, stockQuantity, categoryId } = req.body;
   const product = new Product({
