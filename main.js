@@ -8,12 +8,16 @@ const productRoutes = require('./src/routes/product');
 const orderRoutes = require('./src/routes/order');
 const categoryRoutes = require('./src/routes/category');
 const cartRoutes = require('./src/routes/cart');
+const bodyParser = require('body-parser');
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+app.use("/uploads", express.static("uploads"));    
+
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
