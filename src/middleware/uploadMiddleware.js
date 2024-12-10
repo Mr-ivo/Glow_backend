@@ -6,7 +6,8 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/'); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const { name } = req.body
+    cb(null, name + path.extname(file.originalname));
   },
 });
 
@@ -14,16 +15,20 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png/;
-    const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimeType = fileTypes.test(file.mimetype);
-
-    if (extName && mimeType) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only images are allowed (JPEG, JPG, PNG)'));
+    const fileTypes = ['image/jpeg','image/jpg','image/png'];
+    if (fileTypes.includes(file.mimetype)){
+        cb(null, true);
+    }else{
+        cb(new Error('Invalid file type. Only JPEG, JPG, PNG images are allowed.'));
     }
+    // if (extName && mimeType) {
+    //   return cb(null, true);
+    // } else {
+    //   cb(new Error('Only images are allowed (JPEG, JPG, PNG)'));
+    // }
   },
 });
+ 
+// const getProduct = (req, res, next)=>{}
 
 module.exports = upload;

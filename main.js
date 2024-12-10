@@ -9,6 +9,7 @@ const orderRoutes = require('./src/routes/order');
 const categoryRoutes = require('./src/routes/category');
 const cartRoutes = require('./src/routes/cart');
 const bodyParser = require('body-parser');
+const path = require('path')
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads'));
+app.use(express.static(path.join(__dirname, 'uploads')));
    
 
 

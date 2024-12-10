@@ -1,12 +1,23 @@
 const Product = require("../models/Product");
 
 exports.createProduct = async (req, res) => {
-  const { name, description, price, stockQuantity, categoryId, image } = req.body;
-  // const image = req.file ? req.file.path : null;
+  const { name, description, price, stockQuantity } = req.body;
+  const image = req.file.filename;
+  imageUrl = `https://glow-backend-2nxl.onrender.com/${image}`
+
+  console.log("Image", image);
+  
 
   if (!image) {
     return res.status(400).json({ error: "Image is required" });
   }
+  console.log("data :",{
+    name,
+    description,
+    price,
+    stockQuantity,
+    image:imageUrl
+  })
 
   try {
     const product = new Product({
@@ -14,8 +25,7 @@ exports.createProduct = async (req, res) => {
       description,
       price,
       stockQuantity,
-      categoryId,
-      image,
+      image:imageUrl
     });
 
     await product.save();
@@ -28,7 +38,7 @@ exports.createProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate("categoryId");
+    const products = await Product.find();
     res.json(products);
   } catch (err) {
     console.error("Error fetching products:", err);
