@@ -1,17 +1,14 @@
 const Product = require("../models/Product");
 
-const createProduct = async (req, res) => {
+exports.createProduct = async (req, res) => {
+  const { name, description, price, stockQuantity, categoryId, image } = req.body;
+  // const image = req.file ? req.file.path : null;
+
+  if (!image) {
+    return res.status(400).json({ error: "Image is required" });
+  }
+
   try {
-    console.log('File received:', req.file);
-    console.log('Body received:', req.body); 
-
-    if (!req.file) {
-      return res.status(400).json({ error: 'Image is required' });
-    }
-
-    const { name, description, price, stockQuantity, categoryId } = req.body;
-    const image = `/uploads/${req.file.filename}`;
-    
     const product = new Product({
       name,
       description,
@@ -21,14 +18,13 @@ const createProduct = async (req, res) => {
       image,
     });
 
-    const savedProduct = await product.save();
-    res.status(201).json(savedProduct);
-  } catch (error) {
-    console.error('Error saving product:', error);
-    res.status(500).json({ error: 'Failed to save product' });
+    await product.save();
+    res.status(201).json({ message: "Product created successfully", product });
+  } catch (err) {
+    console.error("Error creating product:", err);
+    res.status(500).json({ error: "Failed to create product", details: err.message });
   }
 };
-
 
 exports.getProducts = async (req, res) => {
   try {
