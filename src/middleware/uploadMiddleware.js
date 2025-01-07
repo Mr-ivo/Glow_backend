@@ -21,11 +21,7 @@ const upload = multer({
     }else{
         cb(new Error('Invalid file type. Only JPEG, JPG, PNG images are allowed.'));
     }
-    // if (extName && mimeType) {
-    //   return cb(null, true);
-    // } else {
-    //   cb(new Error('Only images are allowed (JPEG, JPG, PNG)'));
-    // }
+    
   },
 });
  
