@@ -25,6 +25,6 @@ const upload = multer({
   },
 });
  
-// const getProduct = (req, res, next)=>{}
+
 
 module.exports = upload;

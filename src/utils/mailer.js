@@ -3,8 +3,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const sendEmail = async (to, subject, text) => {
-  if (!to || !subject || !text) {
+const sendEmail = async (userEmail, userName, message) => {
+  if (!userEmail || !userName || !message) {
     console.error('Invalid email parameters.');
     return;
   }
@@ -19,12 +19,11 @@ const sendEmail = async (to, subject, text) => {
     },
   });
 
-  // Email options
   const mailOptions = {
     from: process.env.EMAIL_USER, 
-    to,                         
-    subject,                    
-    text,                        
+    to: process.env.EMAIL_RECIPIENT || process.env.EMAIL_USER,
+    subject: `New Contact from ${userName}`, 
+    text: `You have a new message from ${userName} (${userEmail}):\n\n${message}`, 
   };
 
   try {

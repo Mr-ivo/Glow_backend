@@ -11,10 +11,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  conform_password: {
-      type: String,
-      required: true
-  },
   password: {
     type: String,
     required: true,
