@@ -12,6 +12,7 @@ const cartRoutes = require('./src/routes/cart');
 const emailRoutes = require('./src/routes/email');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs'); // added fs module
 
 dotenv.config();
 
@@ -19,10 +20,32 @@ const app = express();
 
 app.use(morgan('dev'));
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://apparellglow.vercel.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
+
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'uploads')));
+app.use(express.urlencoded({ extended: true }));
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+app.use('/uploads', express.static(uploadsDir));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, {
+    body: req.body,
+    file: req.file,
+    headers: req.headers
+  });
+  next();
+});
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
@@ -35,6 +58,15 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/api/email', emailRoutes); 
+
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ 
+    error: 'Internal Server Error', 
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

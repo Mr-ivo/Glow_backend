@@ -20,11 +20,16 @@ const sendEmail = async (userEmail, userName, message) => {
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER, 
+    from: process.env.EMAIL_USER,
     to: process.env.EMAIL_RECIPIENT || process.env.EMAIL_USER,
-    subject: `New Contact from ${userName}`, 
-    text: `You have a new message from ${userName} (${userEmail}):\n\n${message}`, 
+    subject: `New Contact from ${userName} - ${new Date().toLocaleString()}`, 
+    text: `
+      You have a new message from ${userName} (${userEmail}):\n\n
+      ${message}\n\n
+      Received on: ${new Date().toLocaleString()}  
+    `,
   };
+  
 
   try {
     const info = await transporter.sendMail(mailOptions);
